@@ -229,6 +229,8 @@ From the repository folder you can issue this:
 ssh admin@${FLOATING_IP} -i keys/admin
 ```
 
+Replace `${FLOATING_IP}` with your floating IP from Digital Ocean.
+
 ## I Lost My Key!
 
 It's okay! Don't panic! Just delete the droplet on Digital Ocean and run the
