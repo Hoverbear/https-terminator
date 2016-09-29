@@ -1,0 +1,42 @@
+# Package Configuration
+- name: Install requirements
+  apt:
+    name={{ item }}
+    state=present
+  with_items:
+    # Application requirements:
+    - nginx
+    - letsencrypt
+
+# Certbot Domains
+- name: Setup Certificates
+  command: letsencrypt certonly --email '{{ email }}' -d '{{ item.in }}' --rsa-key-size 4096 --webroot --webroot-path /var/www/html --agree-tos
+    creates=/etc/letsencrypt/live/{{ item.in }}/fullchain.pem
+  with_items: "{{ sites }}"
+
+- name: Install letsencrypt timer
+  copy:
+    src=tasks/host/files/letsencrypt.timer
+    dest=/etc/systemd/system/letsencrypt.timer
+- name: Install letsencrypt service
+  copy:
+    src=tasks/host/files/letsencrypt.service
+    dest=/etc/systemd/system/letsencrypt.service
+- name: Enable and start the letsencrypt timer
+  service:
+    name=letsencrypt.timer
+    state=started
+    enabled=yes
+
+# Nginx setup
+- name: Inject nginx config
+  template:
+    src=tasks/host/files/nginx-site.conf
+    dest=/etc/nginx/sites-enabled/default
+  register: nginx_config
+- name: Enable and restart the nginx service
+  service:
+    name=nginx
+    state=restarted
+    enabled=yes
+  when: nginx_config|changed

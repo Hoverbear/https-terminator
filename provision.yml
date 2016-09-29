@@ -1,0 +1,23 @@
+- hosts: localhost
+  vars_files:
+    - settings.yml
+  connection: local
+  gather_facts: false
+  tasks:
+    - include: tasks/digital_ocean/tasks.yml
+
+- hosts: the_host
+  vars_files:
+    - settings.yml
+  remote_user: root
+  gather_facts: false
+  pre_tasks:
+    - name: Wait for port 22 to become available
+      local_action: "wait_for port=22 host={{ inventory_hostname }}"
+    - name: Ensure ansible requirements exists
+      raw: sudo apt-get -y install python python-simplejson
+    - name: Gathering Facts
+      setup:
+  tasks:
+    - include: tasks/host/init.yml
+    - include: tasks/host/services.yml

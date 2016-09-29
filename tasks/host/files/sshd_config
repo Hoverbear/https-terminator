@@ -1,0 +1,26 @@
+# Daemon Setup
+Port 22                               # Default and predictable.
+Protocol 2                            # Protocol 1 is insecure.
+HostKey /etc/ssh/ssh_host_rsa_key     # Use a single, simple key.
+UsePrivilegeSeparation yes            # Daemon uses unprivileged user.
+TCPKeepAlive yes                      # Connection health checks.
+PrintLastLog yes                      # Always show last login.
+
+# Logging
+SyslogFacility AUTH
+LogLevel INFO
+
+# Authentication Security
+LoginGraceTime 30                   # 30s is enough for key logins
+# PermitRootLogin no                  # We only allow pubkey auth, and use a 4096 bit key, so this is safe.
+StrictModes yes                     # Make sure the users home isn't world writable
+PubkeyAuthentication yes            # Allow pubkeys
+PermitEmptyPasswords no             # No empty passwords
+ChallengeResponseAuthentication no  # No PAM challenges
+PasswordAuthentication no           # No passwords
+UsePAM yes                          # PAM account/session checks
+
+# Allow client to pass locale environment variables
+AcceptEnv LANG LC_*
+
+Subsystem sftp /usr/lib/openssh/sftp-server

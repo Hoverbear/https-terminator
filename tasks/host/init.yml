@@ -1,0 +1,50 @@
+# Package Configuration
+- name: Upgrade all packages
+  apt:
+    upgrade=dist
+
+# Admin user configuration
+- name: Create admin user
+  user:
+    name=admin
+    groups=admin
+    shell=/bin/bash
+- name: Set up admin user authorized key
+  authorized_key:
+    user=admin
+    key="{{ lookup('file', 'keys/admin.pub') }}"
+
+# Configure sudo
+- name: Setup sudoers rules
+  lineinfile:
+    dest=/etc/sudoers
+    state=present
+    regexp='^%admin ALL\='
+    line='%admin ALL=(ALL) NOPASSWD:ALL'
+    validate='visudo -cf %s'
+
+# Configure sshd
+- name: Inject sshd config
+  copy:
+    src=tasks/host/files/sshd_config
+    dest=/etc/ssh/sshd_config
+  register: sshd_config
+- name: Restart sshd
+  service:
+    name=sshd
+    state=restarted
+    enabled=yes
+  when: sshd_config.changed
+
+# Set the timezone
+- name: check current timezone
+  shell: timedatectl | grep "Europe/Berlin"
+  register: current_timezone
+  changed_when: False
+- name: Set timezone
+  when: current_timezone|failed
+  shell: timedatectl set-timezone 'Europe/Berlin'
+  register: timezone
+- name: Update timezone with dpkg
+  when: timezone.changed
+  command: dpkg-reconfigure --frontend noninteractive tzdata

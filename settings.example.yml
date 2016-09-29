@@ -1,0 +1,8 @@
+token: abc123
+email: example@example.com
+# It's important you use this format!
+sites:
+  - in: example.org
+    out: https://example-user.github.io/example-repo/
+  - in: example-2.com
+    out: https://example-user.github.io/example-repo-2/

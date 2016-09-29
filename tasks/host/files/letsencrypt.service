@@ -1,0 +1,6 @@
+[Unit]
+Description=Certificate renewal
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/letsencrypt renew --webroot --webroot-path /var/www/letsencrypt
