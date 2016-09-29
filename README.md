@@ -4,6 +4,11 @@ A simple HTTPS reverse proxy for sites such as those hosted by
 [Github Pages](https://pages.github.com/) which are either unprotected or have
 a certificate which is not valid for the desired domain.
 
+For example, [https://hoverbear.org](https://hoverbear.org) is hosted by
+Github Pages at [https://hoverbear.github.io/hoverbear.org/](https://hoverbear.github.io/hoverbear.org/)
+and terminated by one of these boxes. If you visit [https://hoverbear.org](https://hoverbear.org)
+you'll see that the certificate presented is valid and issued by [Let's Encrypt](https://letsencrypt.org/).
+
 **Features:**
 
 * By default uses a $5/mo [Digital Ocean](http://digitalocean.com/) droplet.
